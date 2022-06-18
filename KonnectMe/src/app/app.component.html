@@ -1,13 +1,23 @@
-<div class="row">
-  <div class="col-4"></div>
-  <div class="col-4"><app-header></app-header></div>
-  <div class="col-4"></div>
+<div class="container">
+  <div class="row">
+  
+    <app-header></app-header>
+  </div>
+  <div class="row">
+
+    <video id="video" onclick="play();">
+      <source src="./assets/bg-video.mp4" type="video/mp4" />
+  </video>
+  <div class="overlay">
+      <p>Content above your video</p>
+     
+  </div>
+  </div>
+
 </div>
 
-<div class="row">
-  <div class="col-md-4"></div>
-  <div class="col-md-4">
-    <app-joining-page></app-joining-page>
-  </div>
-  <div class="col-md-4"></div>
-</div>
+
+
+
+
+    

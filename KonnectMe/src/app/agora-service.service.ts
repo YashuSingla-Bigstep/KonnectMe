@@ -8,15 +8,15 @@ export class AgoraServiceService {
   
   client: IAgoraRTCClient = AgoraRTC.createClient({
     mode: 'rtc',
-    codec: 'vp8',
+    codec: 'vp8', 
   });
   AgoraAppId= '4cfb2aa4550349a58d4e46530d261a68'
   ChannelName= 'Demoproject'
-  AgoraToken= '0064cfb2aa4550349a58d4e46530d261a68IACVhsp0iarpL1RB1eJ0GT+MyR2SRVpAHdSayk7ScQ0EnsHP4CwAAAAAEAC5bVGztASsYgEAAQC0BKxi'
+  AgoraToken= '0064cfb2aa4550349a58d4e46530d261a68IABjLdNaFFwrGhGGtOF9OrEvWgwAUcKF07Uf4RIdJ7LINcHP4CwAAAAAEACXhJCZHNGuYgEAAQAc0a5i'
   private localVideoTrack: ILocalVideoTrack;
   private localAudioTrack: ILocalAudioTrack;
   private renderer: Renderer2;
-
+ 
   constructor(rendererFactory: RendererFactory2) {
       this.renderer = rendererFactory.createRenderer(null, null);
   }
@@ -28,9 +28,16 @@ export class AgoraServiceService {
       this.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
       await this.client.publish([this.localAudioTrack, this.localVideoTrack]);
       //this.localVideoTrack.play('user');
-      
+      const userCard: HTMLDivElement = await this.renderer.createElement('div');
+      this.renderer.setAttribute(userCard,'id', 'user')
+      this.renderer.setStyle(userCard, 'height', '300px');
+      this.renderer.setStyle(userCard, 'width', '300px');
+      this.renderer.addClass(userCard, 'Loalvideo-card')
+      const localcard = document.getElementById('localuser');
+      this.renderer.appendChild(localcard, userCard)
       console.warn(uid);
-      this.localVideoTrack.play('user')
+      this.localVideoTrack.play(userCard)
+      
     } catch(error){
       console.log(error);
     }
@@ -42,39 +49,56 @@ export class AgoraServiceService {
       
       this.client.on("user-published", async (user, mediaType) => {
         console.log(user);
-        
         await this.client.subscribe(user,mediaType);
         console.log('subscribe Successfully');
         if(mediaType === "video"){
           const RvideoTrack = user.videoTrack;
+          const Raudiotrack = user.audioTrack;
           console.log(this.renderer);
-          const RemoteuserCard: HTMLDivElement = await this.renderer.createElement('div');
-          const usercard = document.getElementById('remoteUser');
-          console.log(usercard);
-          this.renderer.setAttribute(RemoteuserCard, 'id', user.uid.toString());
-          this.renderer.setStyle(RemoteuserCard, 'height', '500px');
-          this.renderer.setStyle(RemoteuserCard, 'width', '500px');
+          const RemoteCard: HTMLDivElement = await this.renderer.createElement('div');
+          const Remoteusercard = document.getElementById('remoteUser');
+          this.renderer.setAttribute(RemoteCard, 'id', user.uid.toString());
+          this.renderer.setStyle(RemoteCard, 'height', '300px');
+          this.renderer.setStyle(RemoteCard, 'width', '300px');
+          this.renderer.addClass(RemoteCard, 'Remotevideo-card')
           console.log('height-fixed',user);
-          
-          this.renderer.appendChild(usercard, RemoteuserCard);
-          RvideoTrack.play(RemoteuserCard);
+          this.renderer.appendChild(Remoteusercard, RemoteCard);
+          RvideoTrack.play(RemoteCard);
+          Raudiotrack.play();
         }
       })
     }catch(error){
       console.log(error);
-      
     }
-    
-
   }
 
   async leavecall(){
     this.localAudioTrack.close()
     this.localVideoTrack.close();
-    const removeCard = document.getElementById(this.client.uid.toString());
-    const usercard = document.getElementById('remoteUser');
-    this.renderer.removeChild(usercard, removeCard)
-    await this.client.leave()
-    console.warn('client-leaved')
+    const localcard = document.getElementById('localuser')
+    const usercard = document.getElementById('user');
+    const Remotecard = document.getElementById('remoteUser')
+    console.log(Remotecard);
+    const RemoteChildern = document.getElementById("remoteUser").childNodes
+    console.log(RemoteChildern)
+    const copyRemoteChildern = Array.from(RemoteChildern)
+    copyRemoteChildern.forEach(
+      (currentValue)=>{
+        console.log(currentValue, "Removed");
+        this.renderer.removeChild(Remotecard, currentValue)
+      }
+    );
+    this.renderer.removeChild(localcard,usercard);
+    this.client.leave();
+  }
+
+  async remoteuserleave(){
+    this.client.on('user-left', async(user,reason)=>{
+      const Remotecard = document.getElementById('remoteUser');
+      const remoteuserid = user.uid.toString();
+      const remoteusercard = document.getElementById(remoteuserid);
+      console.log(remoteuserid, remoteusercard);
+      this.renderer.removeChild(Remotecard,remoteusercard)
+    })
   }
 }

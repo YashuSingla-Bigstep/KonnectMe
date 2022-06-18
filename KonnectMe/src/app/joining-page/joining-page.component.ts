@@ -18,16 +18,6 @@ export class JoiningPageComponent implements OnInit {
     
     await this.agoraservice.startcall(this.user)
     console.log('user-joined');
-    
-    await this.agoraservice.RemoteUser()
-    console.log('user-remote');
-    
-
-    
-    
-   
-    
-
   }
 
   async leavecall(){
@@ -35,7 +25,10 @@ export class JoiningPageComponent implements OnInit {
     console.log('leave call');
     
   }
-  ngOnInit(): void {
+  async ngOnInit() {
+    await this.agoraservice.RemoteUser()
+    console.log('user-remote');
+    await this.agoraservice.remoteuserleave();
   }
 
 }

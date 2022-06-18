@@ -1,6 +1,24 @@
-h1{
-    color: red;
-    height: 100%;
-    background-color: yellow;
-    border: 2px dotted blue;
-}
+body{
+    padding-top: 60px;
+    padding-bottom: 40px;
+    }
+    .fixed-header
+    {
+    width: 100%;
+    position: fixed;
+    background: rgb(183, 255, 51);
+    padding: 10px 0;
+    color: #fff;
+    }
+    .fixed-header{
+    top: 0;
+    }
+    .container{
+    width: 80%;
+    margin: 0 auto;
+    }
+    nava{
+    color: #fff;
+    padding: 7px 25px;
+    display: inline-block;
+    }
